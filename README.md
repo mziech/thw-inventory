@@ -1,5 +1,8 @@
 # THW Inventory
 
+**Despite the name, the software is in no way affiliated with THW, except
+being maybe of use for some enthusiasts being members of that agency.**
+
 This is a web application to help with inventory assessments.
 It provides a web interface to search for assets and tag assets which have been seen as part of an assessment.
 Because this software is tailored to the requirements for the "German Federal Agency for Technical Relief"
