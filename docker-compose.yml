@@ -1,0 +1,45 @@
+---
+version: "3.3"
+volumes:
+  mysql:
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "23306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: myapp
+    volumes:
+      - mysql:/var/lib/mysql
+
+  web:
+    build:
+      context: docker
+      dockerfile: Dockerfile.web
+    volumes:
+      - .:/work
+      - $HOME/.m2/repository:/home/user/.m2/repository
+    ports:
+      - "8080:8080"
+    environment:
+      spring.datasource.url: jdbc:mariadb://db/myapp
+      spring.datasource.username: dev
+      spring.datasource.password: 123456
+      spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
+    command: /docker-as-user.sh "cd /work && ./mvnw clean compile spring-boot:run"
+
+  node:
+    build:
+      dockerfile: Dockerfile.node
+      context: docker
+      args:
+        target: BASE
+    image: node
+    volumes:
+      - .:/work
+    command: /docker-as-user.sh "cd /work && npm install && npm run watch"
