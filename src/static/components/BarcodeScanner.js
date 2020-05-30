@@ -180,7 +180,7 @@ export default function BarcodeScanner({ onDetected, children }) {
                 </Dropdown>}
             </Col>
             {capabilities.torch && <Col sm={12} md={3} lg={2}>
-                <ToggleButton value={torch} onChange={setTorch}>Licht</ToggleButton>
+                <Button active={torch} onClick={() => setTorch(!torch)}>Licht</Button>
             </Col>}
             {zoomSteps && <Col sm={12} md={3} lg={2}>
                 <Dropdown>
