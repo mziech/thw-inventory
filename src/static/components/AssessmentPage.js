@@ -69,7 +69,7 @@ export default class AssessmentPage extends React.Component {
 
                 <Row>
                     <Col><Link to="/assessment" className={"btn btn-secondary"}>Vorgang wechseln</Link></Col>
-                    <Col><a href={`/api/assessments/${this.props.assessmentId}/csv`} className={"btn btn-primary"}>Exportieren</a></Col>
+                    <Col><a href={`${api.contextPath}/api/assessments/${this.props.assessmentId}/csv`} className={"btn btn-primary"}>Exportieren</a></Col>
                     <Col><Button variant="secondary" onClick={() => this.reopenAssessment()}>Erneut öffnen</Button></Col>
                 </Row>
             </Container>;
@@ -91,7 +91,7 @@ export default class AssessmentPage extends React.Component {
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
-                                <Dropdown.Item href={`/api/assessments/${this.props.assessmentId}/csv`}>Exportieren</Dropdown.Item>
+                                <Dropdown.Item href={`${api.contextPath}/api/assessments/${this.props.assessmentId}/csv`}>Exportieren</Dropdown.Item>
                                 <Dropdown.Item variant="danger" onClick={() => this.closeAssessment()}>Schließen</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>

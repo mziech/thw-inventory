@@ -1,3 +1,0 @@
-FROM node:10
-
-ADD docker-as-user.sh /

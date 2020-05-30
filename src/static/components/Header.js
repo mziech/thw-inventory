@@ -22,36 +22,36 @@ import {NavLink} from "react-router-dom";
 import {useSessionStorage} from "../hooks";
 import api from "../api";
 
-function AssessmentItem() {
+
+export default function Header({ username, onLogout }) {
     const [assessmentId, setAssessmentId] = useSessionStorage("assessmentId");
 
-    return <Nav.Item>
-        {assessmentId === undefined && <NavLink className="nav-link" activeClassName="active" to="/assessment">Erfassung</NavLink>}
-        {assessmentId !== undefined && <NavLink className="nav-link" activeClassName="active" to={`/assessment/${assessmentId}`}>Erfassung</NavLink>}
-    </Nav.Item>;
-}
-
-export default class Header extends React.Component {
-    render() {
-        return <Navbar bg={"light"} expand="lg">
-            <Navbar.Brand>THW Bestand</Navbar.Brand>
-            <Navbar.Toggle/>
-
-            <Navbar.Collapse>
-                <Nav className="mr-auto">
-                    <Nav.Item><NavLink className="nav-link" activeClassName="active" to="/" exact={true}>Suche</NavLink></Nav.Item>
-                    <AssessmentItem/>
-                    <Nav.Item><NavLink className="nav-link" activeClassName="active" to="/import">Import</NavLink></Nav.Item>
-                </Nav>
-                <Nav>
-                    <Nav.Item><NavLink className="nav-link" activeClassName="active" to="/current-user">{this.props.username}</NavLink></Nav.Item>
-                    <Nav.Item><Nav.Link onClick={() => this.logout()}>Abmelden</Nav.Link></Nav.Item>
-                </Nav>
-            </Navbar.Collapse>
-        </Navbar>;
+    function logout() {
+        api.post("/logout", {}).then(() => onLogout());
     }
 
-    logout() {
-        api.post("/logout", {}).then(() => this.props.onLogout());
-    }
+    return <Navbar bg={"light"} expand="lg">
+        <Navbar.Brand>THW Bestand</Navbar.Brand>
+        <Navbar.Toggle/>
+
+        <Navbar.Collapse>
+            <Nav className="mr-auto">
+                <Nav.Item><NavLink className="nav-link" activeClassName="active" to="/"
+                                   exact={true}>Suche</NavLink></Nav.Item>
+                <Nav.Item>
+                    {assessmentId === undefined &&
+                    <NavLink className="nav-link" activeClassName="active" to="/assessment">Erfassung</NavLink>}
+                    {assessmentId !== undefined &&
+                    <NavLink className="nav-link" activeClassName="active" to={`/assessment/${assessmentId}`}>Erfassung</NavLink>}
+                </Nav.Item>
+                <Nav.Item><NavLink className="nav-link" activeClassName="active"
+                                   to="/import">Import</NavLink></Nav.Item>
+            </Nav>
+            <Nav>
+                <Nav.Item><NavLink className="nav-link" activeClassName="active"
+                                   to="/current-user">{username}</NavLink></Nav.Item>
+                <Nav.Item><Nav.Link onClick={logout}>Abmelden</Nav.Link></Nav.Item>
+            </Nav>
+        </Navbar.Collapse>
+    </Navbar>;
 }

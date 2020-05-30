@@ -1,4 +1,4 @@
-FROM node:10 as NODE
+FROM node:12 as NODE
 WORKDIR /work
 RUN mkdir -p /work
 ADD package.json package-lock.json /work/

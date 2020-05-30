@@ -18,33 +18,20 @@
 import React from "react";
 import AssessmentSelect from "./AssessmentSelect";
 import {Container} from "react-bootstrap";
-import {Redirect} from "react-router";
+import {useHistory} from "react-router";
 import {useSessionStorage} from "../hooks";
 
-function AssessmentSelected({assessmentId}) {
-    const [ oldAssessmentId, setAssessmentId ] = useSessionStorage("assessmentId");
-    setAssessmentId(assessmentId);
-    return <Redirect to={`/assessment/${assessmentId}`}/>
-}
+export default function AssessmentSelectionPage() {
+    const history = useHistory();
+    const [ sessionAssessmentId, setSessionAssessmentId ] = useSessionStorage("assessmentId");
 
-export default class AssessmentSelectionPage extends React.Component {
-
-    render() {
-        if (this.state && this.state.assessmentId) {
-            return <AssessmentSelected assessmentId={this.state.assessmentId}/>
-        }
-
-        return (
-            <Container>
-                <h1>Bitte wählen Sie einen Vorgang aus:</h1>
-                <AssessmentSelect onlyOpen={true} onSelect={assessmentId => this.onSelect(assessmentId)}/>
-            </Container>
-        );
-    }
-
-    onSelect(assessmentId) {
-        this.setState({ assessmentId });
-    }
-
-
+    return (
+        <Container>
+            <h1>Bitte wählen Sie einen Vorgang aus:</h1>
+            <AssessmentSelect onlyOpen={true} onSelect={assessmentId => {
+                setSessionAssessmentId(assessmentId);
+                history.push(`/assessment/${assessmentId}`);
+            }}/>
+        </Container>
+    );
 }

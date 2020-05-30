@@ -73,7 +73,7 @@ export default class AssessmentSelect extends React.Component {
     }
 
     onSelect(assessment) {
-        this.setState(Object.assign({}, this.state, {selectedAssessment: assessment}));
+        this.setState(Object.assign({}, this.state, { selectedAssessment: assessment }));
         this.props.onSelect(assessment.id)
     }
 
@@ -95,7 +95,7 @@ export default class AssessmentSelect extends React.Component {
             loading: true
         }));
         api.post('/assessments', { name: this.state.newName })
-            .then(({json}) => {
+            .then(({ json }) => {
                 this.setState({
                     loading: false,
                     selectedAssessment: json,

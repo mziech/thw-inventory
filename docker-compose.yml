@@ -34,12 +34,9 @@ services:
     command: /docker-as-user.sh "cd /work && ./mvnw clean compile spring-boot:run"
 
   node:
-    build:
-      dockerfile: Dockerfile.node
-      context: docker
-      args:
-        target: BASE
-    image: node
+    image: node:12
     volumes:
       - .:/work
+      - ./docker/docker-as-user.sh:/docker-as-user.sh:ro
     command: /docker-as-user.sh "cd /work && npm install && npm run watch"
+  

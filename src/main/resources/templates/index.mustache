@@ -1,16 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="x-context-path" content="{{basePath}}">
 
     <title>THW Bestand</title>
+
+    <style>
+        .root-loading {
+            font-family: helvetica, sans-serif;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 100vh;
+        }
+    </style>
 </head>
 <body>
 
 <div id="root">
-    Anwendung wird geladen ...
+    <div class="root-loading">
+        Anwendung wird geladen ...
+    </div>
 </div>
 
 <script src="{{basePath}}/dist/bundle.js"></script>

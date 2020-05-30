@@ -95,20 +95,17 @@ export default class SearchField extends React.Component {
                </Col>
             </Row>
          </Form>
-         {this.state.scanner && <Row>
-            <Col lg={{span: 4, offset: 3}} sm={12}><BarcodeScanner onDetected={this.onDetected.bind(this)}/></Col>
-            <Col lg={2} sm={12}>
-               <ToggleButtonGroup
-                   type="radio"
-                   name="scanMulti"
-                   value={this.state.scanMulti}
-                   onChange={scanMulti => this.setState({ scanMulti })}
-               >
-                  <ToggleButton value={false}>Einzeln</ToggleButton>
-                  <ToggleButton value={true}>Mehrere</ToggleButton>
-               </ToggleButtonGroup>
-            </Col>
-         </Row>}
+         {this.state.scanner && <BarcodeScanner onDetected={this.onDetected.bind(this)}>
+            <ToggleButtonGroup
+                type="radio"
+                name="scanMulti"
+                value={this.state.scanMulti}
+                onChange={scanMulti => this.setState({ scanMulti })}
+            >
+               <ToggleButton value={false}>Einzeln</ToggleButton>
+               <ToggleButton value={true}>Mehrere</ToggleButton>
+            </ToggleButtonGroup>
+         </BarcodeScanner>}
       </Jumbotron>
    }
 
