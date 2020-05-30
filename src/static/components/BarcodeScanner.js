@@ -28,7 +28,6 @@ const defaultResolutions = [
     [1280, 1024],
     [1600, 1200],
     [1920, 1080],
-    [2048, 2048],
 ];
 
 const patchSizeLabel = {
@@ -223,11 +222,14 @@ export default function BarcodeScanner({ onDetected, children }) {
         </Row>
         <Modal show={showCaps} onHide={() => setShowCaps(false)}>
             <Modal.Header closeButton>
-                <Modal.Title>Kamera Eigenschaften</Modal.Title>
+                <Modal.Title>Kamera-Info</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
+                <h5>Eigenschaften dieser Kamera:</h5>
                 <pre>{JSON.stringify(capabilities, 2, 2)}</pre>
+                <h5>Verfügbare Kameras:</h5>
+                <pre>{JSON.stringify(cameras, 2, 2)}</pre>
             </Modal.Body>
         </Modal>
     </React.Fragment>;
