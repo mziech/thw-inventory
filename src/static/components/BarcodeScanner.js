@@ -105,9 +105,9 @@ export default function BarcodeScanner({ onDetected, children }) {
         Quagga.init({
             inputStream: {
                 target: targetRef.current,
-                deviceId: cameraId,
                 type : "LiveStream",
                 constraints: {
+                    deviceId: cameraId,
                     width: resolution[0],
                     height: resolution[1],
                 }
