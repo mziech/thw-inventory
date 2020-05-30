@@ -26,12 +26,17 @@ const defaultResolutions = [
     [800, 600],
     [1024, 768],
     [1280, 1024],
+    [1600, 1200],
+    [1920, 1080],
+    [2048, 2048],
 ];
 
 const patchSizeLabel = {
+    'x-small': 'Extra-Klein',
     'small': 'Klein',
     'medium': 'Mittel',
     'large': 'Groß',
+    'x-large': 'Extra-Groß',
 };
 
 function findResolutions(width, height, aspectRatio) {
@@ -58,11 +63,37 @@ function findResolutions(width, height, aspectRatio) {
     return allowed;
 }
 
+const MAX_ZOOM_STEPS = 20;
+const MIN_ZOOM_STEP_SIZE = 0.1;
+
+function findZoomSteps(zoom) {
+    if (!zoom || !zoom.min || !zoom.max) {
+        return null;
+    }
+
+    let steps = [];
+    const range = zoom.max - zoom.min;
+    if (range / MIN_ZOOM_STEP_SIZE <= MAX_ZOOM_STEPS) {
+        for (let f = zoom.min; f < zoom.max; f += MIN_ZOOM_STEP_SIZE) {
+            steps.push(f);
+        }
+        steps.push(zoom.max);
+    } else {
+        const stepSize = range / MAX_ZOOM_STEPS;
+        for (let f = zoom.min; f < zoom.max; f += stepSize) {
+            steps.push(f);
+        }
+        steps.push(zoom.max);
+    }
+    return steps;
+}
+
 export default function BarcodeScanner({ onDetected, children }) {
     const targetRef = React.createRef();
 
     const [ resolution, setResolution ] = useLocalStorage("barcode.resolution", [800, 600]);
     const [ torch, setTorch ] = useLocalStorage("barcode.torch", false);
+    const [ zoom, setZoom ] = useLocalStorage("barcode.zoom", 1.0);
     const [ patchSize, setPatchSize ] = useLocalStorage("barcode.patchSize", "medium");
     const [ cameraId, setCameraId ] = useLocalStorage("barcode.cameraId", Quagga.CameraAccess.getActiveStreamLabel());
 
@@ -80,14 +111,13 @@ export default function BarcodeScanner({ onDetected, children }) {
                 constraints: {
                     width: resolution[0],
                     height: resolution[1],
-                    facingMode: "environment" // or user
                 }
             },
             locator: {
                 patchSize,
                 halfSample: true
             },
-            numOfWorkers: 2,
+            numOfWorkers: 4,
             decoder: {
                 readers : [ "code_128_reader"],
                 debug: {
@@ -111,6 +141,9 @@ export default function BarcodeScanner({ onDetected, children }) {
                 if (capabilities.torch) {
                     track.applyConstraints({advanced: [{torch}]});
                 }
+                if (capabilities.zoom && capabilities.zoom.min && capabilities.zoom.max) {
+                    track.applyConstraints({advanced: [{zoom}]});
+                }
             } else {
                 setCapabilities({});
             }
@@ -122,11 +155,12 @@ export default function BarcodeScanner({ onDetected, children }) {
             Quagga.offDetected(onDetected);
             Quagga.stop()
         }
-    }, [torch, cameraId, resolution, patchSize]);
+    }, [torch, zoom, cameraId, resolution, patchSize]);
 
     const [ cameras, setCameras ] = useState();
     Quagga.CameraAccess.enumerateVideoDevices().then(setCameras);
     const resolutions = findResolutions(capabilities.width, capabilities.height, capabilities.aspectRatio);
+    const zoomSteps = findZoomSteps(capabilities.zoom);
 
     return <React.Fragment>
         <Row>
@@ -148,6 +182,16 @@ export default function BarcodeScanner({ onDetected, children }) {
             </Col>
             {capabilities.torch && <Col sm={12} md={3} lg={2}>
                 <ToggleButton value={torch} onChange={setTorch}>Licht</ToggleButton>
+            </Col>}
+            {zoomSteps && <Col sm={12} md={3} lg={2}>
+                <Dropdown>
+                    <Dropdown.Toggle>Zoom: {zoom}</Dropdown.Toggle>
+                    <Dropdown.Menu>
+                        {zoomSteps.map((f, i) => <Dropdown.Item
+                            key={i} onClick={() => setZoom(f)}
+                        >{f}</Dropdown.Item>)}
+                    </Dropdown.Menu>
+                </Dropdown>
             </Col>}
             <Col sm={12} md={3} lg={2}>
                 <Dropdown>
