@@ -17,7 +17,7 @@
  */
 import React, {useState} from "react";
 import Quagga from "@ericblade/quagga2";
-import {Button, Col, Dropdown, Modal, Row, ToggleButton} from "react-bootstrap";
+import {Button, Col, Dropdown, Modal, Row} from "react-bootstrap";
 import {useLocalStorage} from "../hooks";
 
 const defaultResolutions = [
@@ -136,13 +136,14 @@ export default function BarcodeScanner({ onDetected, children }) {
             setCurrentCameraLabel(Quagga.CameraAccess.getActiveStreamLabel());
             const track = Quagga.CameraAccess.getActiveTrack();
             if (track && typeof track.getCapabilities === 'function') {
-                setCapabilities(track.getCapabilities());
-                if (capabilities.torch) {
+                const caps = track.getCapabilities();
+                if (caps.torch) {
                     track.applyConstraints({advanced: [{torch}]});
                 }
-                if (capabilities.zoom && capabilities.zoom.min && capabilities.zoom.max) {
+                if (caps.zoom && caps.zoom.min && caps.zoom.max) {
                     track.applyConstraints({advanced: [{zoom}]});
                 }
+                setCapabilities(caps);
             } else {
                 setCapabilities({});
             }
