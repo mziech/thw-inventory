@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import thw.inventory.domain.model.Assessment;
+import thw.inventory.domain.model.AssessmentStatistics;
 import thw.inventory.domain.model.Asset;
 import thw.inventory.domain.model.Note;
 import thw.inventory.service.AssessmentService;
@@ -32,6 +33,7 @@ import thw.inventory.service.NoteService;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 public class AssessmentController {
@@ -52,8 +54,13 @@ public class AssessmentController {
     }
 
     @GetMapping("/api/assessments")
-    public Page<Assessment> getById(@RequestParam(required = false, defaultValue = "false") boolean onlyOpen) {
+    public Page<Assessment> getAll(@RequestParam(required = false, defaultValue = "false") boolean onlyOpen) {
         return assessmentService.findAll(onlyOpen);
+    }
+
+    @GetMapping("/api/assessments/statistics")
+    public Map<Long, AssessmentStatistics> getAllStatistics() {
+        return assessmentService.getStatistics();
     }
 
     @GetMapping("/api/assessments/{assessmentId}")

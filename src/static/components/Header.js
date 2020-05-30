@@ -45,6 +45,8 @@ export default function Header({ username, onLogout }) {
                     <NavLink className="nav-link" activeClassName="active" to={`/assessment/${assessmentId}`}>Erfassung</NavLink>}
                 </Nav.Item>
                 <Nav.Item><NavLink className="nav-link" activeClassName="active"
+                                   to="/assessment" exact>Vorgänge</NavLink></Nav.Item>
+                <Nav.Item><NavLink className="nav-link" activeClassName="active"
                                    to="/import">Import</NavLink></Nav.Item>
             </Nav>
             <Nav>

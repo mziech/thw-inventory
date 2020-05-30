@@ -24,15 +24,20 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import thw.inventory.domain.model.Assessment;
+import thw.inventory.domain.model.AssessmentStatistics;
 import thw.inventory.domain.model.Note;
 import thw.inventory.domain.model.NoteType;
 import thw.inventory.domain.repository.AssessmentItemRepository;
 import thw.inventory.domain.repository.AssessmentRepository;
+import thw.inventory.domain.repository.AssessmentStatisticsRepository;
 import thw.inventory.domain.repository.NoteRepository;
 import thw.inventory.error.AssessmentException;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class AssessmentService {
@@ -41,11 +46,19 @@ public class AssessmentService {
 
     private final AssessmentItemRepository assessmentItemRepository;
 
+    private final AssessmentStatisticsRepository assessmentStatisticsRepository;
+
     private final NoteRepository noteRepository;
 
-    public AssessmentService(AssessmentRepository assessmentRepository, AssessmentItemRepository assessmentItemRepository, NoteRepository noteRepository) {
+    public AssessmentService(
+            AssessmentRepository assessmentRepository,
+            AssessmentItemRepository assessmentItemRepository,
+            AssessmentStatisticsRepository assessmentStatisticsRepository,
+            NoteRepository noteRepository
+    ) {
         this.assessmentRepository = assessmentRepository;
         this.assessmentItemRepository = assessmentItemRepository;
+        this.assessmentStatisticsRepository = assessmentStatisticsRepository;
         this.noteRepository = noteRepository;
     }
 
@@ -142,4 +155,10 @@ public class AssessmentService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Map<Long, AssessmentStatistics> getStatistics() {
+        return assessmentStatisticsRepository.getStatistics(null)
+                .stream()
+                .collect(Collectors.toMap(AssessmentStatistics::getId, Function.identity()));
+    }
 }

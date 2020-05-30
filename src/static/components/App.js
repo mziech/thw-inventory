@@ -21,7 +21,7 @@ import { BrowserRouter, Route, Link } from "react-router-dom";
 import SearchPage from "./SearchPage";
 import ImportPage from "./ImportPage";
 import AssessmentPage from "./AssessmentPage";
-import AssessmentSelectionPage from "./AssessmentSelectionPage";
+import AssessmentListPage from "./AssessmentListPage";
 import api from "../api";
 import PageSpinner from "./PageSpinner";
 import CurrentUserPage from "./CurrentUserPage";
@@ -61,7 +61,7 @@ export default class App extends React.Component {
         return <BrowserRouter basename={api.contextPath}>
             <Header username={this.state.username} onLogout={() => this.setState({ loggedOut: true })}/>
             <Route path="/" exact component={SearchPage}/>
-            <Route path="/assessment" exact component={AssessmentSelectionPage}/>
+            <Route path="/assessment" exact component={AssessmentListPage}/>
             <Route path="/assessment/:id" exact component={p => <AssessmentPage assessmentId={p.match.params.id}/>}/>
             <Route path="/import" exact component={ImportPage}/>
             <Route path="/current-user" exact component={CurrentUserPage}/>
