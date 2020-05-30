@@ -87,6 +87,11 @@ public class AssessmentController {
         return assessmentService.reopen(assessmentId);
     }
 
+    @PostMapping("/api/assessments/{assessmentId}/rename")
+    public Assessment reopen(@PathVariable long assessmentId, @RequestBody Assessment assessment) {
+        return assessmentService.rename(assessmentId, assessment.getName());
+    }
+
     @DeleteMapping("/api/assessments/{assessmentId}")
     public void delete(@PathVariable long assessmentId) {
         assessmentService.delete(assessmentId);

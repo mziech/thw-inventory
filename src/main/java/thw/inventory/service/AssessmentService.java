@@ -111,6 +111,16 @@ public class AssessmentService {
         return assessmentRepository.save(assessment);
     }
 
+    @Transactional
+    public Assessment rename(long assessmentId, String name) {
+        var assessment = assessmentRepository.findById(assessmentId)
+                .orElseThrow(() -> new IllegalStateException("Assessment not found: " + assessmentId));
+
+        assessment.setName(name);
+
+        return assessmentRepository.save(assessment);
+    }
+
     @Transactional(readOnly = true)
     public Page<Assessment> findAll(boolean onlyOpen) {
         var pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.Direction.DESC, "createdDate");
@@ -161,4 +171,5 @@ public class AssessmentService {
                 .stream()
                 .collect(Collectors.toMap(AssessmentStatistics::getId, Function.identity()));
     }
+
 }

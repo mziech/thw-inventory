@@ -16,18 +16,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, {useEffect, useState} from "react";
-import AssessmentSelect from "./AssessmentSelect";
-import {Badge, Button, Container, Table} from "react-bootstrap";
+import {
+    Badge,
+    Button,
+    Container,
+    Dropdown,
+    FormControl,
+    InputGroup,
+    OverlayTrigger,
+    Table,
+    Tooltip
+} from "react-bootstrap";
 import {useHistory} from "react-router";
 import {useSessionStorage} from "../hooks";
 import api from "../api";
 import PageSpinner from "./PageSpinner";
+import dayjs from "dayjs";
 
 export default function AssessmentListPage() {
     const history = useHistory();
     const [ sessionAssessmentId, setSessionAssessmentId ] = useSessionStorage("assessmentId");
+
     const [ assessments, setAssessments ] = useState(null);
     const [ assessmentStatistics, setAssessmentStatistics ] = useState({});
+    const [ renameAssessmentId, setRenameAssessmentId ] = useState(null);
+    const [ newName, setNewName ] = useState("");
 
     useEffect(() => {
         api.get("/assessments").then(({json}) => setAssessments(json.content));
@@ -38,8 +51,8 @@ export default function AssessmentListPage() {
         return <PageSpinner/>
     }
 
-    function assessmentAction(id, action) {
-        api.post(`/assessments/${id}/${action}`).then(({json}) =>
+    function assessmentAction(id, action, payload) {
+        api.post(`/assessments/${id}/${action}`, payload).then(({json}) =>
             setAssessments(assessments.map(assessment => assessment.id === json.id ? json : assessment))
         ).catch(err => console.log(`Assessment action ${action} error`, err));
     }
@@ -57,28 +70,58 @@ export default function AssessmentListPage() {
                 </tr>
                 </thead>
                 <tbody>
-                {assessments.map(assessment => <tr>
-                    <td>{assessment.name}</td>
+                {assessments.map(assessment => <tr key={assessment.id}>
+                    <td>
+                        {renameAssessmentId !== assessment.id && assessment.name}
+                        {renameAssessmentId === assessment.id && <InputGroup>
+                            <FormControl value={newName} onChange={e => setNewName(e.target.value)}/>
+                            <InputGroup.Append>
+                                <Button variant="outline-secondary" onClick={() => {
+                                    assessmentAction(assessment.id, 'rename', {name: newName});
+                                    setRenameAssessmentId(null)
+                                }}>Umbenennen</Button>
+                                <Button variant="outline-secondary" onClick={() => setRenameAssessmentId(null)}>Abbruch</Button>
+                            </InputGroup.Append>
+                        </InputGroup>}
+                    </td>
                     <td>
                         {assessmentStatistics[assessment.id] &&
                         `${assessmentStatistics[assessment.id].seen} / ${assessmentStatistics[assessment.id].count}`}
                     </td>
-                    <td>{assessment.open ? <Badge variant="success">Offen</Badge> : <Badge variant="danger">Abgeschlossen</Badge>}</td>
                     <td>
-                        {assessment.open && <Button variant="primary" onClick={() => {
-                            setSessionAssessmentId(assessment.id);
-                            history.push(`/assessment/${assessment.id}`);
-                        }}>Erfassung</Button>}
-                        {assessment.open && <Button variant="danger" onClick={() =>
-                            window.confirm("Soll der ausgewählte Vorgang wirklich abgeschlossen werden?")
-                            && assessmentAction(assessment.id, "close")
-                        }>Schließen</Button>}
-                        {assessment.open || <Button variant="danger" onClick={() =>
-                            assessmentAction(assessment.id, "reopen")
-                        }>Erneut öffnen</Button>}
-                        <Button variant="secondary" href={
-                            `${api.contextPath}/api/assessments/${assessment.id}/csv`
-                        }>Export</Button>
+                        <OverlayTrigger overlay={<Tooltip id={"details"}>
+                            Erstellt
+                            {assessment.createdDate && ` am ${dayjs(assessment.createdDate).format('llll')}`}
+                            {assessment.createdBy && ` von ${assessment.createdBy}`}<br/>
+                            {assessment.closedDate && `Geschlossen am ${dayjs(assessment.closedDate).format('llll')}`}
+                        </Tooltip>}>
+                            {assessment.open ? <Badge variant="success">Offen</Badge> : <Badge variant="danger">Abgeschlossen</Badge>}
+                        </OverlayTrigger>
+                    </td>
+                    <td>
+                        <Dropdown>
+                            <Dropdown.Toggle>Aktionen</Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                {assessment.open && <Dropdown.Item onClick={() => {
+                                    setSessionAssessmentId(assessment.id);
+                                    history.push(`/assessment/${assessment.id}`);
+                                }}>Erfassung</Dropdown.Item>}
+                                {assessment.open && <Dropdown.Item onClick={() =>
+                                    window.confirm("Soll der ausgewählte Vorgang wirklich abgeschlossen werden?")
+                                    && assessmentAction(assessment.id, "close")
+                                }>Schließen</Dropdown.Item>}
+                                {assessment.open || <Dropdown.Item onClick={() =>
+                                    assessmentAction(assessment.id, "reopen")
+                                }>Erneut öffnen</Dropdown.Item>}
+                                <Dropdown.Item onClick={() => {
+                                    setNewName(assessment.name);
+                                    setRenameAssessmentId(assessment.id);
+                                }}>Umbenennen</Dropdown.Item>
+                                <Dropdown.Item href={
+                                    `${api.contextPath}/api/assessments/${assessment.id}/csv`
+                                }>Export</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </td>
                 </tr>)}
                 </tbody>
