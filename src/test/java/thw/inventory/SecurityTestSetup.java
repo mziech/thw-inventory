@@ -19,18 +19,13 @@ package thw.inventory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
@@ -77,34 +72,4 @@ public class SecurityTestSetup {
         ));
     }
 
-    public void login() {
-        sessionId.set(null);
-        csrf.set(null);
-
-        var prelogin = testRestTemplate.getForEntity("/login", String.class);
-        sessionId.set(prelogin.getHeaders().get("Set-Cookie").stream()
-                .filter(v -> v.startsWith("JSESSIONID="))
-                .map(v -> v.substring(v.indexOf('=') + 1, v.indexOf(';')))
-                .findFirst().orElseThrow());
-
-        var formHeaders = new HttpHeaders();
-        formHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        var form = new LinkedMultiValueMap<>();
-        form.add("username", "admin");
-        form.add("password", "changeit");
-        form.add("_csrf", prelogin.getBody().replaceAll("(?ms).*<input [^>]*name=\"_csrf\"[^>]*value=\"([^\"]*)\".*", "$1"));
-
-        var login = testRestTemplate.postForEntity("/login", new HttpEntity<>(form, formHeaders), String.class);
-
-        Optional.ofNullable(login.getHeaders().get("Set-Cookie")).stream()
-                .flatMap(Collection::stream)
-                .filter(v -> v.startsWith("JSESSIONID="))
-                .map(v -> v.substring(v.indexOf('=') + 1, v.indexOf(';')))
-                .forEach(sessionId::set);
-
-        var session = testRestTemplate.getForObject("/api/current-user", ObjectNode.class);
-        csrf.set(new DefaultCsrfToken(
-                session.path("csrfHeader").textValue(), "_csrf", session.path("csrfToken").textValue()));
-    }
 }
