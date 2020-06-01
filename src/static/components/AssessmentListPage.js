@@ -27,15 +27,12 @@ import {
     Table,
     Tooltip
 } from "react-bootstrap";
-import {useHistory} from "react-router";
-import {useSessionStorage} from "../hooks";
 import api from "../api";
 import PageSpinner from "./PageSpinner";
 import dayjs from "dayjs";
+import {Link} from "react-router-dom";
 
 export default function AssessmentListPage() {
-    const history = useHistory();
-    const [ sessionAssessmentId, setSessionAssessmentId ] = useSessionStorage("assessmentId");
 
     const [ assessments, setAssessments ] = useState(null);
     const [ assessmentStatistics, setAssessmentStatistics ] = useState({});
@@ -72,7 +69,8 @@ export default function AssessmentListPage() {
                 <tbody>
                 {assessments.map(assessment => <tr key={assessment.id}>
                     <td>
-                        {renameAssessmentId !== assessment.id && assessment.name}
+                        {renameAssessmentId !== assessment.id && <Link to={`/assessment/${assessment.id}`}>
+                            {assessment.name}</Link>}
                         {renameAssessmentId === assessment.id && <InputGroup>
                             <FormControl value={newName} onChange={e => setNewName(e.target.value)}/>
                             <InputGroup.Append>
@@ -102,10 +100,8 @@ export default function AssessmentListPage() {
                         <Dropdown>
                             <Dropdown.Toggle>Aktionen</Dropdown.Toggle>
                             <Dropdown.Menu>
-                                {assessment.open && <Dropdown.Item onClick={() => {
-                                    setSessionAssessmentId(assessment.id);
-                                    history.push(`/assessment/${assessment.id}`);
-                                }}>Erfassung</Dropdown.Item>}
+                                {assessment.open && <Dropdown.Item href={`/assessment/${assessment.id}`}>
+                                    Erfassung</Dropdown.Item>}
                                 {assessment.open && <Dropdown.Item onClick={() =>
                                     window.confirm("Soll der ausgewählte Vorgang wirklich abgeschlossen werden?")
                                     && assessmentAction(assessment.id, "close")

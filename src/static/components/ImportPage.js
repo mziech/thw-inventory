@@ -15,43 +15,55 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React from "react";
-import {Container, Spinner, Tab, Tabs} from "react-bootstrap";
+import React, {useEffect, useState} from "react";
+import {Badge, Container, ProgressBar, Tab, Table, Tabs} from "react-bootstrap";
 import Dropzone from "react-dropzone";
 import AssessmentSelect from "./AssessmentSelect";
 import api from "../api";
 
-export default class ImportPage extends React.Component {
+function ImportUpload({ file, assessmentId }) {
+    const [ status, setStatus ] = useState('open');
+    const [ result, setResult ] = useState();
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            assessmentId: null,
-            uploading: false
-        };
-    }
+    useEffect(() => {
+        setStatus('processing');
+        api.postFile(assessmentId ? `/assessments/${assessmentId}/assets/import` : '/assets/import', file).then(() => {
+            setStatus('success');
+        }).catch(e => {
+            console.log(`Failed to upload ${file}`, e.json || e)
+            setStatus('failed');
+            setResult(e.json && e.json.message);
+        });
+    }, [ file ]);
 
-    render() {
-        return <Container>
-            <h1>Daten importieren</h1>
-            <Tabs defaultActiveKey="assessment" id="uncontrolled-tab-example">
-                <Tab eventKey="assessment" title="Mit Vorgang">
-                    <AssessmentSelect onSelect={assessmentId => this.setAssessmentId(assessmentId)}/>
-                    {this.state.assessmentId && this.dropzone(this.state.assessmentId)}
-                </Tab>
-                <Tab eventKey="asset" title="Ohne Vorgang">
-                    {this.dropzone(null)}
-                </Tab>
-            </Tabs>
-        </Container>;
-    }
 
-    dropzone(assessmentId) {
-        if (this.state.uploading) {
-            return <Spinner animation="border" />;
-        }
+    return <tr>
+        <td>{file.name}</td>
+        <td>
+            {status === 'open' && <Badge variant={"secondary"}>Offen</Badge>}
+            {status === 'processing' && <ProgressBar variant={"success"} animated={true}/>}
+            {status === 'success' && <><Badge variant={"success"}>OK</Badge>  {result}</>}
+            {status === 'failed' && <><Badge variant={"danger"}>Fehler</Badge> {result}</>}
+        </td>
+    </tr>;
+}
 
-        return <Dropzone onDropAccepted={files => this.uploadFiles(files, assessmentId)}>
+function ImportDropzone({ assessmentId }) {
+    const [ files, setFiles ] = useState([]);
+
+    const onDropAccepted = (moreFiles) => {
+        setFiles([ ...files, ...moreFiles ]);
+    };
+
+    const uploading = false;
+
+    return <>
+        <Table>
+            <tbody>
+            {files.map((file, i) => <ImportUpload key={i} file={file} assessmentId={assessmentId} />)}
+            </tbody>
+        </Table>
+        {!uploading && <Dropzone onDropAccepted={onDropAccepted}>
             {({getRootProps, getInputProps}) => (
                 <div className="file-drop">
                     <div {...getRootProps()}>
@@ -60,23 +72,25 @@ export default class ImportPage extends React.Component {
                     </div>
                 </div>
             )}
-        </Dropzone>;
-    }
+        </Dropzone>}
+    </>;
+}
 
-    uploadFiles(files, assessmentId) {
-        this.setState(Object.assign({}, this.state, { uploading: true }));
-        Promise.all(files.map(file =>
-            api.postFile(assessmentId ? `/assessments/${assessmentId}/assets/import` : '/assets/import', file)
-        )).then(() => {
-            this.setState(Object.assign({ uploading: false }));
-        }).catch(err => {
-            console.log("Upload failed", err);
-            this.setState(Object.assign({ uploading: false }));
-        });
+export default function ImportPage() {
 
-    }
+    const [ assessmentId, setAssessmentId ] = useState(null);
 
-    setAssessmentId(assessmentId) {
-        this.setState(Object.assign({}, this.state, { assessmentId }));
-    }
+    return <Container>
+        <h1>Daten importieren</h1>
+        <Tabs defaultActiveKey="assessment" id="uncontrolled-tab-example">
+            <Tab eventKey="assessment" title="Mit Vorgang">
+                <AssessmentSelect onSelect={setAssessmentId}/>
+                {assessmentId && <ImportDropzone assessmentId={assessmentId}/>}
+            </Tab>
+            <Tab eventKey="asset" title="Ohne Vorgang">
+                <ImportDropzone assessmentId={null}/>
+            </Tab>
+        </Tabs>
+    </Container>;
+
 }

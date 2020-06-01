@@ -27,13 +27,13 @@ import BarcodeScanner from "./BarcodeScanner";
 import audio from "../audio";
 
 const types = [
-   {type: 'ANY_ID', label: 'Geräte- o. Inventarnr.'},
-   {type: 'INVENTORY_ID', label: 'Inventarnr.'},
-   {type: 'DEVICE_ID', label: 'Gerätenr.'},
-   {type: 'DESCRIPTION', label: 'Ausstattung'},
-   {type: 'MANUFACTURER', label: 'Hersteller'},
-   {type: 'PART_ID', label: 'Sachnummer'},
-   {type: 'UNIT', label: 'AN/Einheit'},
+   {type: 'ANY_ID', label: 'Geräte- o. Inventarnr.', inputMode: 'numeric'},
+   {type: 'INVENTORY_ID', label: 'Inventarnr.', inputMode: 'numeric'},
+   {type: 'DEVICE_ID', label: 'Gerätenr.', inputMode: 'search'},
+   {type: 'DESCRIPTION', label: 'Ausstattung', inputMode: 'search'},
+   {type: 'MANUFACTURER', label: 'Hersteller', inputMode: 'search'},
+   {type: 'PART_ID', label: 'Sachnummer', inputMode: 'search'},
+   {type: 'UNIT', label: 'AN/Einheit', inputMode: 'search'},
 ];
 
 export default class SearchField extends React.Component {
@@ -43,12 +43,30 @@ export default class SearchField extends React.Component {
       this.state = {
          type: types[0].type,
          typeLabel: types[0].label,
+         inputMode: types[0].inputMode,
          value: '',
          locked: false,
          scanner: false,
          scanMulti: false,
          lastDetected: null
       };
+   }
+
+   componentDidMount() {
+      this.shortcutHandler = window.addEventListener('keyup', ev => {
+         if (!this.props.inputRef.current) {
+            return;
+         }
+
+         if (ev.key === 'b' && ev.ctrlKey) {
+            this.props.inputRef.current.focus();
+            ev.preventDefault();
+         }
+      });
+   }
+
+   componentWillUnmount() {
+      window.removeEventListener('keyup', this.shortcutHandler);
    }
 
    render() {
@@ -71,6 +89,7 @@ export default class SearchField extends React.Component {
                </Col>
                <Col sm={12} md={true}>
                   <FormControl type="text" className="form-control" value={this.state.value}
+                               inputMode={this.state.inputMode}
                                onChange={e => this.setValue(e.target.value)}
                                ref={this.props.inputRef}
                                size="lg"
@@ -127,7 +146,8 @@ export default class SearchField extends React.Component {
    setTypeIndex(index) {
       this.setState({
          type: types[index].type,
-         typeLabel: types[index].label
+         typeLabel: types[index].label,
+         inputMode: types[index].inputMode,
       });
    }
 
@@ -162,6 +182,7 @@ export default class SearchField extends React.Component {
              this.props.onResults({search, body: json});
              this.setValue('');
              this.setLocked(false);
+             this.props.inputRef.current && this.props.inputRef.current.focus();
           }).catch(() => {
              this.setLocked(false);
           });

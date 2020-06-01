@@ -15,16 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React from "react";
+import React, {useEffect} from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import {NavLink} from "react-router-dom";
+import {NavLink, useLocation, useRouteMatch} from "react-router-dom";
 import {useSessionStorage} from "../hooks";
 import api from "../api";
 
 
 export default function Header({ username, onLogout }) {
     const [assessmentId, setAssessmentId] = useSessionStorage("assessmentId");
+
+    const routeMatch = useRouteMatch("/assessment/:id");
+    useEffect(() => {
+        if (routeMatch && routeMatch.params.id) {
+            setAssessmentId(routeMatch.params.id);
+        }
+    }, [ routeMatch ]);
 
     function logout() {
         api.post("/logout", {}).then(() => onLogout());
