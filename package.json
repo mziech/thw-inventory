@@ -12,8 +12,6 @@
     "css-loader": "^2.1.1",
     "dayjs": "^1.8.28",
     "file-loader": "^3.0.1",
-    "handlebars": "^4.7.6",
-    "handlebars-loader": "^1.7.1",
     "history": "^4.10.1",
     "jquery": "^3.5.1",
     "node-sass": "^4.14.1",
@@ -31,7 +29,8 @@
     "svg-inline-react": "^3.2.0",
     "url-loader": "^1.1.2",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-manifest-plugin": "^2.2.0"
   },
   "scripts": {
     "watch": "webpack --mode=development -w",

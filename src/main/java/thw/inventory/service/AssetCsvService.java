@@ -88,7 +88,7 @@ public class AssetCsvService {
                 .addColumns(Arrays.stream(CsvColumn.values()).map(CsvColumn::getColumn).collect(Collectors.toList()), CsvSchema.ColumnType.STRING)
                 .addArrayColumn("Vorgangskommentare", "\n\n")
                 .addArrayColumn("Kommentare", "\n\n")
-                .addBooleanColumn("Erfasst")
+                .addColumn("Erfasst")
                 .setUseHeader(true)
                 .build();
         var writer = csvMapper.writer().with(schema).writeValues(new OutputStreamWriter(os, csvCharset));
@@ -108,7 +108,7 @@ public class AssetCsvService {
                     .map(this::noteToColumn)
                     .collect(Collectors.toList())
             );
-            map.put("Erfasst", assessmentItem.getSeen());
+            map.put("Erfasst", Optional.ofNullable(assessmentItem.getSeen()).map(b -> b ? "ja" : "nein").orElse(""));
             try {
                 writer.write(map);
             } catch (IOException e) {

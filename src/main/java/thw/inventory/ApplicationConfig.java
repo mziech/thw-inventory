@@ -43,9 +43,6 @@ import java.net.URL;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class ApplicationConfig {
 
-    @Value("${static.path:}")
-    String staticPathProperty;
-
     @Bean
     CsvMapper csvMapper() {
         return new CsvMapper();
@@ -70,30 +67,20 @@ public class ApplicationConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
-                if (!staticPathProperty.isBlank()) {
-                    log.info("Reading static resources from file-system: {}", staticPathProperty);
-                    registry.addResourceHandler("/**")
-                            .addResourceLocations(staticPathProperty)
-                            .setCachePeriod(0);
-                    return;
-                }
-
                 ClassPathResource index = new ClassPathResource("/static/ping");
                 try {
                     URL url = index.getURL();
-                    String path = url.toString();
-                    String staticPath = path.substring(0, path.lastIndexOf('/') + 1);
-                    log.info("Reading static resources from file-system URL: {}", staticPath);
-                    registry.addResourceHandler("/**")
-                            .addResourceLocations(staticPath)
-                            .setCachePeriod(0);
-                } catch (IOException e) {
-                    log.info("Using static content from classpath with caching");
-                    registry.addResourceHandler("/**")
-                            .addResourceLocations("classpath:/static/")
-                            .setCachePeriod(24 * 60 * 60);
+                    if (url.getProtocol().equals("file")) {
+                        String path = url.toString();
+                        String staticPath = path.substring(0, path.lastIndexOf('/') + 1);
+                        log.info("Reading static resources from file-system URL: {}", staticPath);
+                        registry.addResourceHandler("/**")
+                                .addResourceLocations(staticPath);
+                        return;
+                    }
+                } catch (IOException ignored) {
                 }
-
+                log.info("Using static content from classpath");
             }
         };
     }

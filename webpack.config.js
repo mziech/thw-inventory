@@ -1,8 +1,11 @@
-
+const ManifestPlugin = require("webpack-manifest-plugin");
 const path = require('path');
 
-module.exports = {
+module.exports = (env, argv) => ({
     entry: './src/static/index.js',
+    plugins: [
+        new ManifestPlugin(),
+    ],
     module: {
         rules: [
             {
@@ -32,11 +35,6 @@ module.exports = {
                         presets: ['@babel/preset-env', '@babel/preset-react']
                     }
                 }
-            }, {
-                test: /\.hbs$/,
-                use: {
-                    loader: 'handlebars-loader'
-                }
             },  {
                 test: /\.(png|woff|woff2|eot|ttf|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 use: {
@@ -46,9 +44,8 @@ module.exports = {
         ]
     },
     output: {
-        filename: 'bundle.js',
-        publicPath: "/dist",
+        filename: argv.mode === 'development' ? 'bundle.js' : 'bundle-[contenthash].js',
         path: path.resolve(__dirname, 'src/main/resources/static/dist')
     }
-};
+});
 

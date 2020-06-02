@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Form, OverlayTrigger, Spinner, Table, Tooltip} from "react-bootstrap";
 import api from "../api";
 import dayjs from "dayjs";
@@ -35,85 +35,76 @@ function NoteText({note}) {
     return <i>!! {note.type}: {note.text} !!</i>
 }
 
-export default class AssetNotes extends React.Component {
+export default function AssetNotes({ assessmentId, assetId }) {
+    const [ loading, setLoading ] = useState(true);
+    const [ submitting, setSubmitting ] = useState(false);
+    const [ notes, setNotes ] = useState({ content: [] });
+    const [ comment, setComment ] = useState("");
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            loading: true,
-            notes: { content: [] },
-            comment: ""
-        };
-    }
-
-    componentDidMount() {
-        this.load();
-    }
-
-    load() {
-        this.setState({ loading: true });
+    function load() {
+        setLoading(true);
         api.get(
-            this.props.assessmentId
-            ? `/assessments/${this.props.assessmentId}/assets/${this.props.assetId}/notes`
-            : `/assets/${this.props.assetId}/notes`
+            assessmentId
+                ? `/assessments/${assessmentId}/assets/${assetId}/notes`
+                : `/assets/${assetId}/notes`
         ).then(({json}) => {
-            this.setState({
-                loading: false,
-                notes: json
-            })
+            setLoading(false);
+            setNotes(json);
+        }).catch(err => {
+            setLoading(false);
+            console.error(`Failed to load notes for ${assetId} in assessment ${assessmentId}`)
         });
     }
 
-    render() {
-        return <React.Fragment>
-            <h3>Notizen <Icon.Sync button size="sm" onClick={() => this.load()}/></h3>
-            {this.loading && <Spinner animated="border"/>}
-            <Table>
-                <thead>
-                <tr>
-                    <th>Zeit</th>
-                    <th>Inhalt</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {this.state.notes.content.map((note, i) => <tr key={i}>
-                        <td>
-                            <OverlayTrigger overlay={<Tooltip>{note.createdBy}</Tooltip>}>
-                                <span>{dayjs(note.createdDate).format("llll")}</span>
-                            </OverlayTrigger>
-                        </td>
-                        <td><NoteText note={note}/></td>
-                    </tr>)}
-                </tbody>
-            </Table>
-            <Form>
-                <Form.Group controlId="comment">
-                    <Form.Label>Kommentar:</Form.Label>
-                    <Form.Control as="textarea" required value={this.state.comment} onChange={e => this.setState({comment: e.target.value})} rows={3}/>
-                </Form.Group>
-                {this.state.submitting && <Spinner animated="border"/>}
-                {!this.state.submitting && this.props.assessmentId && <Button onClick={() => this.onSubmitComment(false)}>Nur dieser Vorgang</Button>}
-                {!this.state.submitting && <Button onClick={() => this.onSubmitComment(true)}>Permanent</Button>}
-            </Form>
-        </React.Fragment>;
-    }
-
-    onSubmitComment(permanent) {
-        this.setState({ submitting: true });
+    function onSubmitComment(permanent) {
+        setSubmitting(true);
         api.post(permanent
-            ? `/assets/${this.props.assetId}/notes`
-            : `/assessments/${this.props.assessmentId}/assets/${this.props.assetId}/notes`,
-            {
-                type: "COMMENT",
-                text: this.state.comment
-            }
+            ? `/assets/${assetId}/notes`
+            : `/assessments/${assessmentId}/assets/${assetId}/notes`,
+            { type: "COMMENT", text: comment }
         ).then(() => {
-            this.setState({ submitting: false, comment: "" });
-            this.load();
+            setSubmitting(false);
+            setComment("");
+            load();
         }).catch(err => {
             console.log("Failed to submit note", err);
-            this.setState({ submitting: false });
+            setSubmitting(false);
         })
     }
 
+    useEffect(() => {
+        load();
+    }, [ assessmentId, assetId ])
+
+    return <React.Fragment>
+        <h3>Notizen <Icon.Sync button size="sm" onClick={() => load()}/></h3>
+        {loading && <Spinner animation={"border"}/>}
+        <Table>
+            <thead>
+            <tr>
+                <th>Zeit</th>
+                <th>Inhalt</th>
+            </tr>
+            </thead>
+            <tbody>
+                {notes.content.map((note, i) => <tr key={i}>
+                    <td>
+                        <OverlayTrigger overlay={<Tooltip id={"note-date-tooltip"}>{note.createdBy}</Tooltip>}>
+                            <span>{dayjs(note.createdDate).format("llll")}</span>
+                        </OverlayTrigger>
+                    </td>
+                    <td><NoteText note={note}/></td>
+                </tr>)}
+            </tbody>
+        </Table>
+        <Form>
+            <Form.Group controlId="comment">
+                <Form.Label>Kommentar:</Form.Label>
+                <Form.Control as="textarea" required value={comment} onChange={e => setComment(e.target.value)} rows={3}/>
+            </Form.Group>
+            {submitting && <Spinner animation={"border"}/>}
+            {!submitting && assessmentId && <Button onClick={() => onSubmitComment(false)}>Nur dieser Vorgang</Button>}
+            {!submitting && <Button onClick={() => onSubmitComment(true)}>Permanent</Button>}
+        </Form>
+    </React.Fragment>;
 }

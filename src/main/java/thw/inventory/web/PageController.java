@@ -17,6 +17,9 @@
  */
 package thw.inventory.web;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
@@ -27,15 +30,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
+@Slf4j
 @RestController
 public class PageController {
+
+    private final Map<String, String> manifest;
+
+    public PageController(ObjectMapper objectMapper) {
+        Map<String, String> manifest;
+        try {
+            manifest = objectMapper.readValue(
+                    new ClassPathResource("/static/dist/manifest.json").getInputStream(),
+                    new TypeReference<>() {}
+            );
+        } catch (IOException e) {
+            log.error("Failed to load frontend manifest, trying to fallback to developer mode", e);
+            manifest = Map.of("main.js", "/dist/bundle.js");
+        }
+        this.manifest = manifest;
+    }
 
     @GetMapping({"/", "/asset/**", "/assessment/**", "/import", "/current-user", "/user/**"})
     public void render(HttpServletRequest request, HttpServletResponse response) throws IOException {
         var page = StreamUtils.copyToString(
                 new ClassPathResource("/templates/index.mustache").getInputStream(), StandardCharsets.UTF_8
-        ).replace("{{basePath}}", stripTrailingSlash(request.getContextPath()));
+        ).replace(
+                "{{basePath}}", stripTrailingSlash(request.getContextPath())
+        ).replace(
+                "{{mainJs}}", manifest.get("main.js")
+        );
         response.setContentType(MimeTypeUtils.TEXT_HTML_VALUE);
         response.setContentLength(page.length());
         try (var writer = response.getWriter()) {
