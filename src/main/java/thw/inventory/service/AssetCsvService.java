@@ -18,6 +18,7 @@
 package thw.inventory.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -153,11 +154,7 @@ public class AssetCsvService {
         var asset = assetRepository.findByInventoryId(inventoryId).orElseGet(Asset::new);
         row.forEach((k, v) ->
                 CsvColumn.findByColumn(k).map(CsvColumn::getSetter).ifPresent(setter -> setter.accept(asset, v)));
-        try {
-            asset.setSource(objectMapper.writeValueAsString(new HashMap<>(row)));
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Could not encode row as JSON: " + row, e);
-        }
+        mergeSourceIntoAsset(asset, row);
         assetRepository.save(asset);
 
         if (assessment != null && assessmentItemRepository.findByAssetIdAndAssessmentId(asset.getId(), assessment.getId()).isEmpty()) {
@@ -177,6 +174,23 @@ public class AssetCsvService {
             note.setType(NoteType.IMPORTED);
             note.setAsset(asset);
             noteRepository.save(note);
+        }
+    }
+
+    private void mergeSourceIntoAsset(Asset asset, Map<String, String> row) {
+        var source = new HashMap<String, String>();
+        try {
+            if (asset.getSource() != null) {
+                source = objectMapper.readValue(asset.getSource(), new TypeReference<>() {});
+            }
+        } catch (JsonProcessingException e) {
+            log.warn("Unable to parse existing source for asset id {}: {}", asset.getId(), asset.getSource(), e);
+        }
+        try {
+            source.putAll(row);
+            asset.setSource(objectMapper.writeValueAsString(source));
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Could not encode row as JSON: " + row, e);
         }
     }
 

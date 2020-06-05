@@ -27,7 +27,7 @@ export default ({ item }) => {
 
     return <Table>
         <tbody>
-        {Object.keys(source).map((k) => <tr key={k}>
+        {Object.keys(source).sort((a, b) => a.localeCompare(b)).map((k) => <tr key={k}>
             <th>{k}</th>
             <td>{source[k]}</td>
         </tr>)}
