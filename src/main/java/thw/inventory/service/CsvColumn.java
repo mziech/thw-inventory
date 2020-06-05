@@ -27,6 +27,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toMap;
+
 @Getter
 public enum CsvColumn {
     INVENTORY_NUMBER("Inventarnr.", Asset::setInventoryId, Asset::getInventoryId),
@@ -37,8 +39,23 @@ public enum CsvColumn {
     DEVICE_ID("Gerätenr.", Asset::setDeviceId, Asset::getDeviceId),
     ;
 
+    private static final Map<String, String> ALIASES = Map.of(
+        "Organisationseinheit", "OE",
+        "AN / Einheit", UNIT.getColumn(),
+        "Inventar-Nr.", INVENTORY_NUMBER.getColumn(),
+        "Geräte-Nr.", DEVICE_ID.getColumn()
+    );
+
+    public static Map<String, String> sanitizeRow(Map<String, String> row) {
+        return row.entrySet().stream().collect(toMap(
+                entry -> ALIASES.getOrDefault(entry.getKey(), entry.getKey()),
+                Map.Entry::getValue,
+                (a, b) -> a
+        ));
+    }
+
     private static final Map<String, CsvColumn> COLUMNS = Stream.of(values())
-            .collect(Collectors.toMap(CsvColumn::getColumn, Function.identity()));
+            .collect(toMap(CsvColumn::getColumn, Function.identity()));
 
     private final String column;
     private final BiConsumer<Asset, String> setter;

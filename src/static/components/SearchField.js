@@ -28,6 +28,7 @@ import audio from "../audio";
 
 const types = [
    {type: 'ANY_ID', label: 'Geräte- o. Inventarnr.', inputMode: 'numeric'},
+   {type: 'ANY_ID', label: 'Geräte- o. Inventarnr. (Text)', inputMode: 'search'},
    {type: 'INVENTORY_ID', label: 'Inventarnr.', inputMode: 'numeric'},
    {type: 'DEVICE_ID', label: 'Gerätenr.', inputMode: 'search'},
    {type: 'DESCRIPTION', label: 'Ausstattung', inputMode: 'search'},

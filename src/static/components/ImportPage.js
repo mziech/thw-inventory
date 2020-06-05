@@ -41,7 +41,7 @@ function ImportUpload({ file, assessmentId }) {
         <td>{file.name}</td>
         <td>
             {status === 'open' && <Badge variant={"secondary"}>Offen</Badge>}
-            {status === 'processing' && <ProgressBar variant={"success"} animated={true}/>}
+            {status === 'processing' && <ProgressBar variant={"primary"} max={100} now={100} animated={true}/>}
             {status === 'success' && <><Badge variant={"success"}>OK</Badge>  {result}</>}
             {status === 'failed' && <><Badge variant={"danger"}>Fehler</Badge> {result}</>}
         </td>

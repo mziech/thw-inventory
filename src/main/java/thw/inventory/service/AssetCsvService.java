@@ -136,13 +136,19 @@ public class AssetCsvService {
         var reader = csvMapper.reader().with(schema).withValueToUpdate(new HashMap<>()).<Map<String, String>>readValues(new InputStreamReader(input, csvCharset));
         var batch = batchProcessor.start(20);
         reader.forEachRemaining(row -> {
-            processLine(assessment.orElse(null), row);
+            processLine(assessment.orElse(null), CsvColumn.sanitizeRow(row));
             batch.add();
         });
     }
 
     private void processLine(Assessment assessment, Map<String, String> row) {
         var inventoryId = row.get(CsvColumn.INVENTORY_NUMBER.getColumn());
+
+        if (inventoryId == null) {
+            log.warn("Skipping asset without inventory id: {}", row);
+            return;
+        }
+
         log.info("Processing CSV line with asset {}", inventoryId);
         var asset = assetRepository.findByInventoryId(inventoryId).orElseGet(Asset::new);
         row.forEach((k, v) ->

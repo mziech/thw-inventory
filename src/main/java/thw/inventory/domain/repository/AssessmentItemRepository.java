@@ -17,6 +17,8 @@
  */
 package thw.inventory.domain.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import thw.inventory.domain.model.AssessmentItem;
@@ -26,6 +28,9 @@ import java.util.stream.Stream;
 
 public interface AssessmentItemRepository extends JpaRepository<AssessmentItem, Long> {
     Optional<AssessmentItem> findByAssetIdAndAssessmentId(Long assetId, Long assessmentId);
+
+    @EntityGraph(attributePaths = {"assessment"}, type = EntityGraph.EntityGraphType.FETCH)
+    Page<AssessmentItem> findAllByAssetIdOrderByAssessmentIdDesc(Long assetId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"asset"}, type = EntityGraph.EntityGraphType.FETCH)
     Stream<AssessmentItem> streamByAssessmentIdOrderByIdAsc(long assessmentId);

@@ -18,9 +18,12 @@
 package thw.inventory.web;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import thw.inventory.domain.model.AssessmentItem;
 import thw.inventory.domain.model.Asset;
 import thw.inventory.domain.model.Note;
+import thw.inventory.service.AssessmentService;
 import thw.inventory.service.AssetSearchService;
 import thw.inventory.service.NoteService;
 
@@ -30,11 +33,16 @@ import java.util.Optional;
 public class AssetController {
 
     private final AssetSearchService assetSearchService;
-
+    private final AssessmentService assessmentService;
     private final NoteService noteService;
 
-    public AssetController(AssetSearchService assetSearchService, NoteService noteService) {
+    public AssetController(
+            AssetSearchService assetSearchService,
+            AssessmentService assessmentService,
+            NoteService noteService
+    ) {
         this.assetSearchService = assetSearchService;
+        this.assessmentService = assessmentService;
         this.noteService = noteService;
     }
 
@@ -51,6 +59,11 @@ public class AssetController {
     @GetMapping("/api/assessments/{assessmentId}/assets/{assetId}")
     public Optional<Asset> getById(@PathVariable long assessmentId, @PathVariable long assetId) {
         return assetSearchService.getById(assetId, assessmentId);
+    }
+
+    @GetMapping("/api/assets/{assetId}/assessments")
+    public Page<AssessmentItem> getAssessmentsById(@PathVariable long assetId, Pageable pageable) {
+        return assessmentService.getAssessmentsForAsset(assetId, pageable);
     }
 
     @GetMapping("/api/assets/{assetId}/notes")

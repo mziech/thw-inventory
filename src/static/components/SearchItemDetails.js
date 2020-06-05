@@ -19,24 +19,18 @@ import React from "react";
 import {Col, Container, Row} from "react-bootstrap";
 import AssetSource from "./AssetSource";
 import AssetNotes from "./AssetNotes";
+import ItemAssessments from "./ItemAssessments";
 
-export default class ItemDetails extends React.Component {
-
-    render() {
-        if (!this.props.item) {
-            return <React.Fragment/>;
-        }
-
-        return <Container fluid>
-            <Row>
-                <Col md={4}>
-                    <AssetSource item={this.props.item}/>
-                </Col>
-                <Col md={8}>
-                    <AssetNotes assetId={this.props.item.id}/>
-                </Col>
-            </Row>
-        </Container>;
-    }
-
-}
+export default ({item}) => item ? <Container fluid>
+    <Row>
+        <Col md={4}>
+            <AssetSource item={item}/>
+        </Col>
+        <Col md={4}>
+            <AssetNotes assetId={item.id}/>
+        </Col>
+        <Col md={4}>
+            <ItemAssessments assetId={item.id}/>
+        </Col>
+    </Row>
+</Container> : <React.Fragment/>;

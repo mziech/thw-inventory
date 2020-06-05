@@ -31,6 +31,7 @@ import api from "../api";
 import PageSpinner from "./PageSpinner";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
+import AssessmentStatus from "./AssessmentStatus";
 
 export default function AssessmentListPage() {
 
@@ -87,14 +88,7 @@ export default function AssessmentListPage() {
                         `${assessmentStatistics[assessment.id].seen} / ${assessmentStatistics[assessment.id].count}`}
                     </td>
                     <td>
-                        <OverlayTrigger overlay={<Tooltip id={"details"}>
-                            Erstellt
-                            {assessment.createdDate && ` am ${dayjs(assessment.createdDate).format('llll')}`}
-                            {assessment.createdBy && ` von ${assessment.createdBy}`}<br/>
-                            {assessment.closedDate && `Geschlossen am ${dayjs(assessment.closedDate).format('llll')}`}
-                        </Tooltip>}>
-                            {assessment.open ? <Badge variant="success">Offen</Badge> : <Badge variant="danger">Abgeschlossen</Badge>}
-                        </OverlayTrigger>
+                        <AssessmentStatus assessment={assessment}/>
                     </td>
                     <td>
                         <Dropdown>

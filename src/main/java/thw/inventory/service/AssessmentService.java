@@ -20,13 +20,11 @@ package thw.inventory.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import thw.inventory.domain.model.Assessment;
-import thw.inventory.domain.model.AssessmentStatistics;
-import thw.inventory.domain.model.Note;
-import thw.inventory.domain.model.NoteType;
+import thw.inventory.domain.model.*;
 import thw.inventory.domain.repository.AssessmentItemRepository;
 import thw.inventory.domain.repository.AssessmentRepository;
 import thw.inventory.domain.repository.AssessmentStatisticsRepository;
@@ -166,10 +164,25 @@ public class AssessmentService {
     }
 
     @Transactional(readOnly = true)
+    public Page<AssessmentItem> getAssessmentsForAsset(long assetId, Pageable pageable) {
+        return assessmentItemRepository.findAllByAssetIdOrderByAssessmentIdDesc(assetId, pageable).map(entity -> {
+            var dto = new AssessmentItem();
+            dto.setSeen(entity.getSeen());
+            dto.setAssessment(new Assessment());
+            dto.getAssessment().setId(entity.getAssessment().getId());
+            dto.getAssessment().setName(entity.getAssessment().getName());
+            dto.getAssessment().setOpen(entity.getAssessment().getOpen());
+            dto.getAssessment().setCreatedBy(entity.getAssessment().getCreatedBy());
+            dto.getAssessment().setCreatedDate(entity.getAssessment().getCreatedDate());
+            dto.getAssessment().setClosedDate(entity.getAssessment().getClosedDate());
+            return dto;
+        });
+    }
+
+    @Transactional(readOnly = true)
     public Map<Long, AssessmentStatistics> getStatistics() {
         return assessmentStatisticsRepository.getStatistics(null)
                 .stream()
                 .collect(Collectors.toMap(AssessmentStatistics::getId, Function.identity()));
     }
-
 }

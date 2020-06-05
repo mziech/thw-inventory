@@ -25,6 +25,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -63,24 +64,19 @@ public class ApplicationConfig {
     }
 
     @Bean
+    @ConditionalOnProperty("static.path")
     WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
+
+            @Value("${static.path}")
+            private String staticPath;
+
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
-                ClassPathResource index = new ClassPathResource("/static/ping");
-                try {
-                    URL url = index.getURL();
-                    if (url.getProtocol().equals("file")) {
-                        String path = url.toString();
-                        String staticPath = path.substring(0, path.lastIndexOf('/') + 1);
-                        log.info("Reading static resources from file-system URL: {}", staticPath);
-                        registry.addResourceHandler("/**")
-                                .addResourceLocations(staticPath);
-                        return;
-                    }
-                } catch (IOException ignored) {
-                }
-                log.info("Using static content from classpath");
+                log.info("Reading static resources from file-system URL: {}", staticPath);
+                registry.addResourceHandler("/**")
+                        .addResourceLocations(staticPath)
+                        .setCachePeriod(0);
             }
         };
     }

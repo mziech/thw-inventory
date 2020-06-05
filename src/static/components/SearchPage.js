@@ -18,7 +18,7 @@
 import React, {useEffect, useState} from "react";
 import SearchField from "./SearchField";
 import SearchResults from "./SearchResults";
-import ItemDetails from "./ItemDetails";
+import SearchItemDetails from "./SearchItemDetails";
 import {Container} from "react-bootstrap";
 
 export default function SearchPage() {
@@ -35,6 +35,6 @@ export default function SearchPage() {
     return <Container fluid>
         <SearchField mode="identify" inputRef={searchInputRef} onResults={setResults}/>
         {results && <SearchResults results={results} onSelect={setItem}/>}
-        {item && <ItemDetails item={item}/>}
+        {item && <SearchItemDetails item={item}/>}
     </Container>;
 }
