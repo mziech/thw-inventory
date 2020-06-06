@@ -96,11 +96,11 @@ export default function BarcodeScanner({ onDetected, children }) {
     const [ torch, setTorch ] = useLocalStorage("barcode.torch", true);
     const [ zoom, setZoom ] = useLocalStorage("barcode.zoom", 2.0);
     const [ patchSize, setPatchSize ] = useLocalStorage("barcode.patchSize", "medium");
-    const [ cameraId, setCameraId ] = useLocalStorage("barcode.cameraId", Quagga.CameraAccess.getActiveStreamLabel());
+    const [ cameraId, setCameraId ] = useLocalStorage("barcode.cameraId");
 
     const [ capabilities, setCapabilities ] = useState({});
     const [ showCaps, setShowCaps ] = useState(false);
-    const [ currentCameraLabel, setCurrentCameraLabel ] = useState("-");
+    const [ currentCameraLabel, setCurrentCameraLabel ] = useState(Quagga.CameraAccess.getActiveStreamLabel() || "-");
 
     React.useEffect(() => {
         console.log("Registering Quagga");
@@ -180,12 +180,14 @@ export default function BarcodeScanner({ onDetected, children }) {
         <Row>
             <Col sm={12} md={5} lg={3}>
                 {cameras && <Dropdown>
-                    <Dropdown.Toggle>Kamera: {currentCameraLabel}</Dropdown.Toggle>
+                    <Dropdown.Toggle>Kamera: {currentCameraLabel} {cameraId == null && "(Standard)"}</Dropdown.Toggle>
                     <Dropdown.Menu>
                         {cameras.map(camera => <Dropdown.Item
                             key={camera.deviceId || camera.id}
                             onClick={() => setCameraId(camera.deviceId || camera.id)}
                         >{camera.label}</Dropdown.Item>)}
+                        <Dropdown.Divider/>
+                        <Dropdown.Item onClick={() => setCameraId(null)}>Standard</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>}
             </Col>
