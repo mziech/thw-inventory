@@ -17,7 +17,7 @@
  */
 import React, {useState} from "react";
 import Quagga from "@ericblade/quagga2";
-import {Button, Col, Dropdown, Modal, Row} from "react-bootstrap";
+import {Alert, Button, Col, Dropdown, Modal, Row} from "react-bootstrap";
 import {useLocalStorage} from "../hooks";
 
 const defaultResolutions = [
@@ -90,9 +90,11 @@ function findZoomSteps(zoom) {
 export default function BarcodeScanner({ onDetected, children }) {
     const targetRef = React.createRef();
 
+    const [ error, setError ] = useState(null);
+
     const [ resolution, setResolution ] = useLocalStorage("barcode.resolution", [800, 600]);
-    const [ torch, setTorch ] = useLocalStorage("barcode.torch", false);
-    const [ zoom, setZoom ] = useLocalStorage("barcode.zoom", 1.0);
+    const [ torch, setTorch ] = useLocalStorage("barcode.torch", true);
+    const [ zoom, setZoom ] = useLocalStorage("barcode.zoom", 2.0);
     const [ patchSize, setPatchSize ] = useLocalStorage("barcode.patchSize", "medium");
     const [ cameraId, setCameraId ] = useLocalStorage("barcode.cameraId", Quagga.CameraAccess.getActiveStreamLabel());
 
@@ -128,8 +130,11 @@ export default function BarcodeScanner({ onDetected, children }) {
             locate: true
         }, function(err) {
             if (err) {
-                return console.log("Failed to start barcode reader", err);
+                setError(err);
+                console.log("Failed to start barcode reader", err);
+                return;
             }
+            setError(null);
             console.log("Starting Quagga");
             Quagga.start();
 
@@ -166,6 +171,10 @@ export default function BarcodeScanner({ onDetected, children }) {
         <Row>
             <Col lg={{span: 4, offset: 3}} sm={12}>
                 <div ref={targetRef} className="barcode-scanner"></div>
+                {error && <Alert variant={"danger"}>
+                    <Alert.Heading>Fehler beim Starten des Barcode Scanners:</Alert.Heading>
+                    <pre>{error.toString()}</pre>
+                </Alert>}
             </Col>
         </Row>
         <Row>
