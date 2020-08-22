@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile.web
     volumes:
       - .:/work
-      - $HOME/.m2/repository:/home/user/.m2/repository
+      - $HOME/.m2:/home/user/.m2
     ports:
       - "8080:8080"
     environment:
