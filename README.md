@@ -22,18 +22,19 @@ docker run -p 8080:8080 ghcr.io/mziech/thw-inventory:latest
 ```
 This will use an embedded H2 database by default, login as `admin` with password `changeit`.
 
-A docker-compose.yml could look like:
+A docker-compose.yml using [a properties file](./src/main/resources/example.properties) could look like:
 ```yaml
 ---
 version: '3'
 services:
-  bestand:
+  inventory:
     image: ghcr.io/mziech/thw-inventory
-    command: /app/run-java.sh -jar /app/thw-inventory.jar --spring.config.location=classpath:application.properties,file:///config/application.properties
     restart: unless-stopped
     user: "XXX"
     volumes:
-      - "./bestand/config:/config:ro"
+      - "./inventory/thw-inventory.properties:/thw-inventory.properties:ro"
+    environment:
+      config_file: "file:///thw-inventory.properties"
     ports:
       - "8080:8080"
 ```

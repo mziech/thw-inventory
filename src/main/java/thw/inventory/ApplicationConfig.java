@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -42,6 +43,7 @@ import java.net.URL;
 @SpringBootConfiguration
 @EnableJpaAuditing
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@PropertySource("${config.file:classpath:/example.properties}")
 public class ApplicationConfig {
 
     @Bean
