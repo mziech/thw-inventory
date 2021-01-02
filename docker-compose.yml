@@ -34,7 +34,7 @@ services:
     command: /docker-as-user.sh "cd /work && ./mvnw clean compile spring-boot:run"
 
   node:
-    image: node:12
+    image: node:lts
     volumes:
       - .:/work
       - ./docker/docker-as-user.sh:/docker-as-user.sh:ro

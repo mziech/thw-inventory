@@ -44,6 +44,7 @@ module.exports = (env, argv) => ({
         ]
     },
     output: {
+        publicPath: '',
         filename: argv.mode === 'development' ? 'bundle.js' : 'bundle-[contenthash].js',
         path: path.resolve(__dirname, 'src/main/resources/static/dist')
     }
