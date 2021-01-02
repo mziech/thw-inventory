@@ -18,15 +18,15 @@
 package thw.inventory.web;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.test.context.support.WithMockUser;
 import thw.inventory.ApplicationTest;
 import thw.inventory.TestDb;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class AssetControllerTest extends ApplicationTest {
 
@@ -37,7 +37,7 @@ public class AssetControllerTest extends ApplicationTest {
     private TestDb testDb;
 
     @Test
-    public void search_asset_by_short_inventory_id() {
+    void search_asset_by_short_inventory_id() {
         testDb.clear();
         var expected = testDb.createAsset(asset -> asset.setInventoryId("0002-000123"));
         testDb.createAsset(asset -> {});

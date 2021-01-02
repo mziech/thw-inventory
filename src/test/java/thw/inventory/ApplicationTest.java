@@ -17,24 +17,12 @@
  */
 package thw.inventory;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
-import java.util.List;
-
-@RunWith(SpringRunner.class)
 @TestPropertySource("classpath:test.properties")
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ContextConfiguration(initializers = TestInitializer.class)
@@ -43,12 +31,8 @@ public class ApplicationTest {
 	@Autowired
 	protected SecurityTestSetup securityTestSetup;
 
-	@Before
-	public void before() {
-	}
-
 	@Test
-	public void contextLoads() {
+	void contextLoads() {
 	}
 
 }

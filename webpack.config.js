@@ -1,10 +1,10 @@
-const ManifestPlugin = require("webpack-manifest-plugin");
+const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const path = require('path');
 
 module.exports = (env, argv) => ({
     entry: './src/static/index.js',
     plugins: [
-        new ManifestPlugin(),
+        new WebpackManifestPlugin(),
     ],
     module: {
         rules: [
@@ -17,10 +17,10 @@ module.exports = (env, argv) => ({
                 }, {
                     loader: 'postcss-loader', // Run postcss actions
                     options: {
-                        plugins: function () { // postcss plugins, can be exported to postcss.config.js
-                            return [
-                                require('autoprefixer')
-                            ];
+                        postcssOptions: {
+                            plugins: [
+                                'autoprefixer',
+                            ]
                         }
                     }
                 }, {

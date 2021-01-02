@@ -25,7 +25,6 @@ import thw.inventory.domain.repository.AssessmentRepository;
 import thw.inventory.domain.repository.AssetRepository;
 import thw.inventory.domain.repository.NoteRepository;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
