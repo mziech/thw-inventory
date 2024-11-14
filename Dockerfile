@@ -12,7 +12,7 @@ WORKDIR /work
 RUN mkdir -p /work
 ADD pom.xml mvnw /work/
 ADD .mvn /work/.mvn
-RUN ./mvnw clean package || true
+RUN ./mvnw clean verify || true
 ADD . /work
 COPY --from=NODE /work/src/main/resources/static/dist /work/src/main/resources/static/dist
 RUN ./mvnw package
