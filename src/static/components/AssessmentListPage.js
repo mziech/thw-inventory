@@ -16,20 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import React, {useEffect, useState} from "react";
-import {
-    Badge,
-    Button,
-    Container,
-    Dropdown,
-    FormControl,
-    InputGroup,
-    OverlayTrigger,
-    Table,
-    Tooltip
-} from "react-bootstrap";
+import {Button, Container, Dropdown, FormControl, InputGroup, Table} from "react-bootstrap";
 import api from "../api";
 import PageSpinner from "./PageSpinner";
-import dayjs from "dayjs";
 import {Link} from "react-router-dom";
 import AssessmentStatus from "./AssessmentStatus";
 

@@ -17,7 +17,6 @@
  */
 import "./SearchField.scss";
 import React from "react";
-import Jumbotron from "react-bootstrap/Jumbotron";
 import Dropdown from "react-bootstrap/Dropdown";
 import {Col, Form, FormControl, Row, Spinner, ToggleButton, ToggleButtonGroup} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
@@ -71,7 +70,7 @@ export default class SearchField extends React.Component {
    }
 
    render() {
-      return <Jumbotron>
+      return <div className={"search-field"}>
          <Form onSubmit={this.onSubmit.bind(this)}>
             <Row>
                <Col sm={12} md="auto">
@@ -126,7 +125,7 @@ export default class SearchField extends React.Component {
                <ToggleButton value={true}>Mehrere</ToggleButton>
             </ToggleButtonGroup>
          </BarcodeScanner>}
-      </Jumbotron>
+      </div>
    }
 
    onDetected({ codeResult }) {

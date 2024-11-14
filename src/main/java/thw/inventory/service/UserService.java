@@ -33,6 +33,7 @@ import thw.inventory.domain.repository.UserRepository;
 import thw.inventory.web.ChangePasswordDto;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -58,20 +59,20 @@ public class UserService implements UserDetailsService, AuditorAware<String> {
 
         var data = Optional.ofNullable(user.getData())
                 .map(this::decodeData)
-                .orElse(new User.Data());
+                .orElse(new User.Data(List.of()));
 
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
                 .password(user.getPassword())
                 .disabled(user.isDisabled())
-                .roles(data.getRoles().toArray(new String[0]))
+                .roles(data.roles().toArray(new String[0]))
                 .build();
     }
 
-    private thw.inventory.domain.model.User.Data decodeData(String json) {
+    private User.Data decodeData(String json) {
         try {
             return objectMapper.readValue(json, User.Data.class);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to decode user data", e);
+            throw new IllegalStateException("Failed to decode user data: " + json, e);
         }
     }
 

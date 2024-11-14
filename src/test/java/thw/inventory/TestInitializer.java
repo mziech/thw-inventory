@@ -20,13 +20,13 @@ package thw.inventory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 public class TestInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         TestPropertyValues.of(
-                "test.server.port=" + SocketUtils.findAvailableTcpPort()
+                "test.server.port=" + TestSocketUtils.findAvailableTcpPort()
         ).applyTo(applicationContext.getEnvironment());
     }
 }

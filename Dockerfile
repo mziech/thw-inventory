@@ -7,7 +7,7 @@ RUN npm audit || true
 ADD . /work
 RUN npm run build
 
-FROM adoptopenjdk/openjdk11-openj9 as JAVA
+FROM eclipse-temurin:21 as JAVA
 WORKDIR /work
 RUN mkdir -p /work
 ADD pom.xml mvnw /work/
@@ -19,9 +19,7 @@ RUN ./mvnw package
 ARG BUILD_TAG
 LABEL BUILD_TAG=$BUILD_TAG
 
-FROM adoptopenjdk/openjdk11-openj9:jre
+FROM eclipse-temurin:21-alpine
 WORKDIR /app
-RUN mkdir -p /app
-ADD docker/run-java.sh /app
 COPY --from=JAVA /work/target/thw-inventory*.jar /app/thw-inventory.jar
-CMD [ "/app/run-java.sh", "-jar", "/app/thw-inventory.jar" ]
+CMD [ "java", "-jar", "/app/thw-inventory.jar" ]

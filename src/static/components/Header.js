@@ -18,7 +18,7 @@
 import React, {useEffect} from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import {NavLink, useLocation, useRouteMatch} from "react-router-dom";
+import {NavLink, useRouteMatch} from "react-router-dom";
 import {useSessionStorage} from "../hooks";
 import api from "../api";
 

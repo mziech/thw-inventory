@@ -42,3 +42,10 @@
     display: none;
   }
 }
+
+.search-field {
+  margin: 1em;
+  padding: 2em;
+  background-color: var(--bs-dark-bg-subtle);
+  border-radius: var(--bs-border-radius);
+}

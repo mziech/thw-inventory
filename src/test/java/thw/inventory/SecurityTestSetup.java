@@ -18,13 +18,13 @@
 package thw.inventory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 

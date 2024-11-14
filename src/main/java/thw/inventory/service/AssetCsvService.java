@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import jakarta.servlet.ServletOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,6 @@ import thw.inventory.domain.repository.AssessmentRepository;
 import thw.inventory.domain.repository.AssetRepository;
 import thw.inventory.domain.repository.NoteRepository;
 
-import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -64,19 +64,18 @@ public class AssetCsvService {
 
     private final ObjectMapper objectMapper;
 
-    private final CsvMapper csvMapper;
+    private final CsvMapper csvMapper = new CsvMapper();
 
     private final BatchProcessor batchProcessor;
 
     private final Charset csvCharset = Charset.forName("windows-1252");
 
-    public AssetCsvService(AssessmentRepository assessmentRepository, AssessmentItemRepository assessmentItemRepository, AssetRepository assetRepository, NoteRepository noteRepository, ObjectMapper objectMapper, CsvMapper csvMapper, BatchProcessor batchProcessor) {
+    public AssetCsvService(AssessmentRepository assessmentRepository, AssessmentItemRepository assessmentItemRepository, AssetRepository assetRepository, NoteRepository noteRepository, ObjectMapper objectMapper, BatchProcessor batchProcessor) {
         this.assessmentRepository = assessmentRepository;
         this.assessmentItemRepository = assessmentItemRepository;
         this.assetRepository = assetRepository;
         this.noteRepository = noteRepository;
         this.objectMapper = objectMapper;
-        this.csvMapper = csvMapper;
         this.batchProcessor = batchProcessor;
     }
 

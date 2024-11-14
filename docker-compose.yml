@@ -27,7 +27,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      spring.datasource.url: jdbc:mariadb://db/myapp
+      spring_datasource.url: jdbc:mariadb://db/myapp
       spring.datasource.username: dev
       spring.datasource.password: 123456
       spring.datasource.driver-class-name: org.mariadb.jdbc.Driver

@@ -120,7 +120,7 @@ export default function BarcodeScanner({ onDetected, children }) {
             },
             numOfWorkers: 4,
             decoder: {
-                readers : [ "code_128_reader"],
+                readers : ["code_128_reader"],
                 debug: {
                     drawBoundingBox: true,
                     drawScanline: true
@@ -158,7 +158,7 @@ export default function BarcodeScanner({ onDetected, children }) {
         return () => {
             console.log("Stopping Quagga");
             Quagga.offDetected(onDetected);
-            Quagga.stop()
+            Quagga.stop();
         }
     }, [torch, zoom, cameraId, resolution, patchSize]);
 

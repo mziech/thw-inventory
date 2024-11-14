@@ -17,16 +17,16 @@
  */
 package thw.inventory.domain.repository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 import thw.inventory.domain.model.Asset;
 import thw.inventory.web.SearchCriteria;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;

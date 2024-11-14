@@ -23,7 +23,6 @@ import * as ReactDOM from "react-dom";
 import App from "./components/App";
 
 import dayjs from "dayjs";
-import dayJsLocaleDe from "dayjs/locale/de";
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 
 dayjs.extend(LocalizedFormat);

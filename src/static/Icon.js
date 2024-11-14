@@ -15,9 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import InlineSVG from "svg-inline-react";
 import React from "react";
 import {Button} from "react-bootstrap";
+import UndoSolid from "./icons/undo-solid.svg";
+import RedoSolid from "./icons/redo-solid.svg";
+import SearchSolid from "./icons/search-solid.svg";
+import BarcodeSolid from "./icons/barcode-solid.svg";
+import SyncSolid from "./icons/sync-solid.svg";
+import TasksSolid from "./icons/tasks-solid.svg";
 
 export default class Icon extends React.Component {
 
@@ -31,35 +36,35 @@ export default class Icon extends React.Component {
             delete all["button"];
             delete all["src"];
             return <Button variant="link" {...all}>
-                <InlineSVG className="icon" src={this.props.src}/>
+                <span className="icon">{this.props.component}</span>
             </Button>;
         }
 
-        return <InlineSVG className="icon" src={this.props.src}/>;
+        return <span className="icon">{this.props.component}</span>;
     }
 
     static Undo(props) {
-        return <Icon src={require("svg-inline-loader!./icons/undo-solid.svg")} {...props} />
+        return <Icon component={<UndoSolid/>} {...props} />
     }
 
     static Redo(props) {
-        return <Icon src={require("svg-inline-loader!./icons/redo-solid.svg")} {...props} />
+        return <Icon component={<RedoSolid/>} {...props} />
     }
 
     static Search(props) {
-        return <Icon src={require("svg-inline-loader!./icons/search-solid.svg")} {...props} />
+        return <Icon component={<SearchSolid/>} {...props} />
     }
 
     static Tasks(props) {
-        return <Icon src={require("svg-inline-loader!./icons/tasks-solid.svg")} {...props} />
+        return <Icon component={<TasksSolid/>} {...props} />
     }
 
     static Sync(props) {
-        return <Icon src={require("svg-inline-loader!./icons/sync-solid.svg")} {...props} />
+        return <Icon component={<SyncSolid/>} {...props} />
     }
 
     static Barcode(props) {
-        return <Icon src={require("svg-inline-loader!./icons/barcode-solid.svg")} {...props} />
+        return <Icon component={<BarcodeSolid/>} {...props} />
     }
 
 }

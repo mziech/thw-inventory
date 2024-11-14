@@ -17,7 +17,7 @@
  */
 import React from "react";
 import Header from "./Header";
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import {BrowserRouter, Route} from "react-router-dom";
 import SearchPage from "./SearchPage";
 import ImportPage from "./ImportPage";
 import AssessmentPage from "./AssessmentPage";

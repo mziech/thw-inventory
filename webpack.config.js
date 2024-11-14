@@ -35,7 +35,11 @@ module.exports = (env, argv) => ({
                         presets: ['@babel/preset-env', '@babel/preset-react']
                     }
                 }
-            },  {
+            }, {
+                test: /\.svg$/i,
+                issuer: /\.[jt]sx?$/,
+                use: ['@svgr/webpack'],
+            }, {
                 test: /\.(png|woff|woff2|eot|ttf|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 use: {
                     loader: 'url-loader'

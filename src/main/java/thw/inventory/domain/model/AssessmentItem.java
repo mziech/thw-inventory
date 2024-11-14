@@ -17,9 +17,8 @@
  */
 package thw.inventory.domain.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(name = "UQ_assessment_asset", columnNames = {"assessment_id", "asset_id"}))

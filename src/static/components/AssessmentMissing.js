@@ -17,7 +17,7 @@
  */
 import React from "react";
 import api from "../api";
-import {Button, Modal, OverlayTrigger, Popover, Table} from "react-bootstrap";
+import {Button, Table} from "react-bootstrap";
 import Icon from "../Icon";
 import PageSelect from "./PageSelect";
 import AssetDetailsModal from "./AssetDetailsModal";

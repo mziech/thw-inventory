@@ -17,7 +17,9 @@
  */
 package thw.inventory;
 
-import org.jasig.cas.client.validation.AssertionImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.apereo.cas.client.validation.AssertionImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,9 +29,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 

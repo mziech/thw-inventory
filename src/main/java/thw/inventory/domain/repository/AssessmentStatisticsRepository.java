@@ -17,11 +17,11 @@
  */
 package thw.inventory.domain.repository;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import thw.inventory.domain.model.AssessmentItem;
 import thw.inventory.domain.model.AssessmentStatistics;
 
-import javax.persistence.EntityManager;
 import java.util.Collection;
 import java.util.Collections;
 

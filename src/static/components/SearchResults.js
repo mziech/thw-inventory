@@ -52,9 +52,9 @@ export default class SearchResults extends React.Component {
                     {this.props.results.body.totalElements > 1 && <Accordion activeKey={this.state.multi ? "0" : null}>
                         <Card>
                             <Card.Header onClick={() => this.setState(Object.assign({}, this.state, {multi: true}))}>
-                                <Accordion.Toggle eventKey="0" as={Button} variant="link">
+                                <Accordion.Button eventKey="0" as={Button} variant="link">
                                     Die Suche lieferte mehrere Treffer, bitte wählen Sie einen aus oder verfeinern Sie die Suchkriterien:
-                                </Accordion.Toggle>
+                                </Accordion.Button>
                             </Card.Header>
                             <Accordion.Collapse eventKey="0">
                                 <Card.Body>

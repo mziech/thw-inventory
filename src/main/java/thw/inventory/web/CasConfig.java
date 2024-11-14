@@ -17,8 +17,8 @@
  */
 package thw.inventory.web;
 
-import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
-import org.jasig.cas.client.validation.TicketValidator;
+import org.apereo.cas.client.validation.Cas30ServiceTicketValidator;
+import org.apereo.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -30,20 +30,18 @@ import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 
 import static java.util.Collections.singletonList;
 
 @Configuration
 @EnableWebSecurity
 @ConditionalOnProperty("cas.server.url")
-public class CasConfig extends WebSecurityConfigurerAdapter {
+public class CasConfig {
 
     @Value("${cas.callback.url}")
     private String casCallbackUrl;
@@ -102,28 +100,18 @@ public class CasConfig extends WebSecurityConfigurerAdapter {
         return new ProviderManager(singletonList(casAuthenticationProvider()));
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-                .anyRequest().authenticated()
-            .and().httpBasic()
-                .authenticationEntryPoint(authenticationEntryPoint())
-            .and().logout()
-                .logoutUrl("/api/logout")
-            .and()
-                .addFilter(casAuthenticationFilter())
+    @Bean
+    public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
+        return http
+            .authorizeHttpRequests(builder -> builder
+                    .requestMatchers("/ping", "/dist/**", "/test/**").anonymous()
+                    .anyRequest().authenticated())
+            .httpBasic(builder -> builder.authenticationEntryPoint(authenticationEntryPoint()))
+            .logout(builder -> builder.logoutUrl("/api/logout"))
+            .addFilter(casAuthenticationFilter())
+            .authenticationProvider(casAuthenticationProvider())
+            .build()
         ;
-    }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/ping", "/dist/**", "/test/**");
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(casAuthenticationProvider());
     }
 
 }

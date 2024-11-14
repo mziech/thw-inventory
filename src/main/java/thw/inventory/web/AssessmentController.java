@@ -17,6 +17,7 @@
  */
 package thw.inventory.web;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +31,6 @@ import thw.inventory.service.AssetCsvService;
 import thw.inventory.service.AssetSearchService;
 import thw.inventory.service.NoteService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;

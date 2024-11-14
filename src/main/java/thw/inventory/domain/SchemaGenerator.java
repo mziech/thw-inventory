@@ -17,24 +17,20 @@
  */
 package thw.inventory.domain;
 
+import jakarta.persistence.Entity;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.hibernate.tool.schema.TargetType;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-import javax.persistence.Entity;
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Map;
 
 public class SchemaGenerator {
 
 
     public static void main(String[] args) {
-        Map<String, String> settings = new HashMap<>();
+        var settings = new HashMap<String, Object>();
         //settings.put("hibernate.connection.driver_class", org.mariadb.jdbc.Driver.class.getCanonicalName());
         //settings.put("hibernate.dialect", org.hibernate.dialect.MySQL57Dialect.class.getCanonicalName());
         //settings.put("hibernate.dialect", org.hibernate.dialect.PostgreSQL95Dialect.class.getCanonicalName());
@@ -46,7 +42,7 @@ public class SchemaGenerator {
         settings.put("show_sql", "true");
         settings.put("hibernate.physical_naming_strategy", "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");
 
-        MetadataSources metadata = new MetadataSources(
+        var metadata = new MetadataSources(
                 new StandardServiceRegistryBuilder()
                         .applySettings(settings)
                         .build());
@@ -62,10 +58,18 @@ public class SchemaGenerator {
                     }
                 })
                 .forEach(metadata::addAnnotatedClass);
-        SchemaExport schemaExport = new SchemaExport();
+
+        /*
+        new HibernateSchemaManagementTool()
+                .getSchemaCreator(settings)
+                .doCreation(
+                        metadata.buildMetadata(),
+                        new ExecutionOptions(),
+                );
         schemaExport.setHaltOnError(true);
         schemaExport.setFormat(true);
         schemaExport.setDelimiter(";");
         schemaExport.execute(EnumSet.of(TargetType.STDOUT), SchemaExport.Action.CREATE, metadata.buildMetadata());
+         */
     }
 }

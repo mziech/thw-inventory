@@ -17,10 +17,9 @@
  */
 package thw.inventory.domain.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -44,11 +43,9 @@ public class User {
     @Column(length = 4096, columnDefinition = "TEXT")
     private String data;
 
-    @lombok.Data
-    public static class Data {
-
-        private List<String> roles = new ArrayList<>();
-
+    public record Data(
+            List<String> roles
+    ) {
     }
 
 }
