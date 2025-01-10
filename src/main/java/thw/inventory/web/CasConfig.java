@@ -104,7 +104,7 @@ public class CasConfig {
     public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests(builder -> builder
-                    .requestMatchers("/ping", "/dist/**", "/test/**").anonymous()
+                    .requestMatchers("/ping", "/dist/**", "/test/**").permitAll()
                     .anyRequest().authenticated())
             .httpBasic(builder -> builder.authenticationEntryPoint(authenticationEntryPoint()))
             .logout(builder -> builder.logoutUrl("/api/logout"))
