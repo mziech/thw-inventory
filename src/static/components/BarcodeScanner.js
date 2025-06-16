@@ -101,6 +101,7 @@ export default function BarcodeScanner({ onDetected, children }) {
     const [ capabilities, setCapabilities ] = useState({});
     const [ showCaps, setShowCaps ] = useState(false);
     const [ currentCameraLabel, setCurrentCameraLabel ] = useState(Quagga.CameraAccess.getActiveStreamLabel() || "-");
+    const [ retry, setRetry ] = useState(0);
 
     React.useEffect(() => {
         console.log("Registering Quagga");
@@ -110,8 +111,8 @@ export default function BarcodeScanner({ onDetected, children }) {
                 type : "LiveStream",
                 constraints: {
                     deviceId: cameraId,
-                    width: resolution[0],
-                    height: resolution[1],
+                    width: resolution[0] || 800,
+                    height: resolution[1] || 600,
                 }
             },
             locator: {
@@ -132,6 +133,7 @@ export default function BarcodeScanner({ onDetected, children }) {
             if (err) {
                 setError(err);
                 console.log("Failed to start barcode reader", err);
+                setTimeout(() => setRetry(retry + 1), 5000);
                 return;
             }
             setError(null);
@@ -160,10 +162,18 @@ export default function BarcodeScanner({ onDetected, children }) {
             Quagga.offDetected(onDetected);
             Quagga.stop();
         }
-    }, [torch, zoom, cameraId, resolution, patchSize]);
+    }, [torch, zoom, cameraId, resolution, patchSize, retry]);
+
+    function reset() {
+        setTorch(true);
+        setZoom(2.0);
+        setCameraId(undefined);
+        setResolution([800, 600]);
+        setPatchSize("medium");
+    }
 
     const [ cameras, setCameras ] = useState();
-    Quagga.CameraAccess.enumerateVideoDevices().then(setCameras);
+    Quagga.CameraAccess.enumerateVideoDevices().then(setCameras).catch(err => console.error("Failed to enumerate cameras", err));
     const resolutions = findResolutions(capabilities.width, capabilities.height, capabilities.aspectRatio);
     const zoomSteps = findZoomSteps(capabilities.zoom);
 
@@ -224,9 +234,11 @@ export default function BarcodeScanner({ onDetected, children }) {
                     </Dropdown.Menu>
                 </Dropdown>
             </Col>
-            <Col sm={12} md={3} lg={2}>
+            <Col sm={6} md={2} lg={1}>
                 <Button onClick={() => setShowCaps(true)}>Kamera-Info</Button>
-
+            </Col>
+            <Col sm={6} md={1} lg={1}>
+                <Button variant="danger" onClick={() => reset()}>Reset</Button>
             </Col>
             <Col sm={12} md={4} lg={3}>
                 {children}
