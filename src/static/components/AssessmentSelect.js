@@ -79,14 +79,10 @@ export default class AssessmentSelect extends React.Component {
 
     renderSelectNew() {
         return <InputGroup>
-            <InputGroup.Prepend>
-                <InputGroup.Text>Neu:</InputGroup.Text>
-            </InputGroup.Prepend>
+            <InputGroup.Text>Neu:</InputGroup.Text>
             <FormControl value={this.state.newName} onChange={e => this.setState(Object.assign({}, this.state, {newName: e.target.value}))}/>
-            <InputGroup.Append>
-                <Button variant="outline-secondary" onClick={() => this.createNew()}>OK</Button>
-                <Button variant="outline-secondary" onClick={() => this.setSelectNew(false)}>Abbruch</Button>
-            </InputGroup.Append>
+            <Button variant="outline-secondary" onClick={() => this.createNew()}>OK</Button>
+            <Button variant="outline-secondary" onClick={() => this.setSelectNew(false)}>Abbruch</Button>
         </InputGroup>;
     }
 

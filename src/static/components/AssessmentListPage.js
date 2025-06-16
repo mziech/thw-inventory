@@ -63,13 +63,11 @@ export default function AssessmentListPage() {
                             {assessment.name}</Link>}
                         {renameAssessmentId === assessment.id && <InputGroup>
                             <FormControl value={newName} onChange={e => setNewName(e.target.value)}/>
-                            <InputGroup.Append>
-                                <Button variant="outline-secondary" onClick={() => {
-                                    assessmentAction(assessment.id, 'rename', {name: newName});
-                                    setRenameAssessmentId(null)
-                                }}>Umbenennen</Button>
-                                <Button variant="outline-secondary" onClick={() => setRenameAssessmentId(null)}>Abbruch</Button>
-                            </InputGroup.Append>
+                            <Button variant="outline-secondary" onClick={() => {
+                                assessmentAction(assessment.id, 'rename', {name: newName});
+                                setRenameAssessmentId(null)
+                            }}>Umbenennen</Button>
+                            <Button variant="outline-secondary" onClick={() => setRenameAssessmentId(null)}>Abbruch</Button>
                         </InputGroup>}
                     </td>
                     <td>
